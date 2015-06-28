@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2014 Icebergcoin team
+// Copyright (c) 2014 Coffeecoin team
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +12,7 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// IcebergcoinMiner
+// CoffeecoinMiner
 //
 
 extern unsigned int nMinerSleep;
@@ -521,7 +521,7 @@ void StakeMiner(CWallet *pwallet)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 
     // Make this thread recognisable as the mining thread
-    RenameThread("Icebergcoin-miner");
+    RenameThread("Coffeecoin-miner");
 
     bool fTryToSync = true;
 

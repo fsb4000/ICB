@@ -2,7 +2,7 @@
 #include "ui_overviewpage.h"
 
 #include "walletmodel.h"
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 #include "optionsmodel.h"
 #include "transactiontablemodel.h"
 #include "transactionfilterproxy.h"
@@ -19,7 +19,7 @@ class TxViewDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    TxViewDelegate(): QAbstractItemDelegate(), unit(IcebergcoinUnits::ICB)
+    TxViewDelegate(): QAbstractItemDelegate(), unit(CoffeecoinUnits::CFC)
     {
 
     }
@@ -66,7 +66,7 @@ public:
             foreground = option.palette.color(QPalette::Text);
         }
         painter->setPen(foreground);
-        QString amountText = IcebergcoinUnits::formatWithUnit(unit, amount, true);
+        QString amountText = CoffeecoinUnits::formatWithUnit(unit, amount, true);
         if(!confirmed)
         {
             amountText = QString("[") + amountText + QString("]");
@@ -135,11 +135,11 @@ void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBa
     currentStake = stake;
     currentUnconfirmedBalance = unconfirmedBalance;
     currentImmatureBalance = immatureBalance;
-    ui->labelBalance->setText(IcebergcoinUnits::formatWithUnit(unit, balance));
-    ui->labelStake->setText(IcebergcoinUnits::formatWithUnit(unit, stake));
-    ui->labelUnconfirmed->setText(IcebergcoinUnits::formatWithUnit(unit, unconfirmedBalance));
-    ui->labelImmature->setText(IcebergcoinUnits::formatWithUnit(unit, immatureBalance));
-    ui->labelTotal->setText(IcebergcoinUnits::formatWithUnit(unit, balance + stake + unconfirmedBalance + immatureBalance));
+    ui->labelBalance->setText(CoffeecoinUnits::formatWithUnit(unit, balance));
+    ui->labelStake->setText(CoffeecoinUnits::formatWithUnit(unit, stake));
+    ui->labelUnconfirmed->setText(CoffeecoinUnits::formatWithUnit(unit, unconfirmedBalance));
+    ui->labelImmature->setText(CoffeecoinUnits::formatWithUnit(unit, immatureBalance));
+    ui->labelTotal->setText(CoffeecoinUnits::formatWithUnit(unit, balance + stake + unconfirmedBalance + immatureBalance));
 
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -172,7 +172,7 @@ void OverviewPage::setModel(WalletModel *model)
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
     }
 
-    // update the display unit, to not use the default ("ICB")
+    // update the display unit, to not use the default ("CFC")
     updateDisplayUnit();
 }
 

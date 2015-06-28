@@ -1,7 +1,7 @@
 #include "guiutil.h"
-#include "icebergcoinaddressvalidator.h"
+#include "coffeecoinaddressvalidator.h"
 #include "walletmodel.h"
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 #include "util.h"
 #include "init.h"
 
@@ -10,7 +10,11 @@
 #include <QDoubleValidator>
 #include <QFont>
 #include <QLineEdit>
+#if QT_VERSION >= 0x050000
+#include <QUrlQuery>
+#else
 #include <QUrl>
+#endif
 #include <QTextDocument> // For Qt::escape
 #include <QAbstractItemView>
 #include <QApplication>
@@ -52,7 +56,7 @@ QString dateTimeStr(qint64 nTime)
     return dateTimeStr(QDateTime::fromTime_t((qint32)nTime));
 }
 
-QFont icebergcoinAddressFont()
+QFont coffeecoinAddressFont()
 {
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
@@ -61,9 +65,9 @@ QFont icebergcoinAddressFont()
 
 void setupAddressWidget(QLineEdit *widget, QWidget *parent)
 {
-    widget->setMaxLength(IcebergcoinAddressValidator::MaxAddressLength);
-    widget->setValidator(new IcebergcoinAddressValidator(parent));
-    widget->setFont(icebergcoinAddressFont());
+    widget->setMaxLength(CoffeecoinAddressValidator::MaxAddressLength);
+    widget->setValidator(new CoffeecoinAddressValidator(parent));
+    widget->setFont(coffeecoinAddressFont());
 }
 
 void setupAmountWidget(QLineEdit *widget, QWidget *parent)
@@ -75,16 +79,21 @@ void setupAmountWidget(QLineEdit *widget, QWidget *parent)
     widget->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 }
 
-bool parseIcebergcoinURI(const QUrl &uri, SendCoinsRecipient *out)
+bool parseCoffeecoinURI(const QUrl &uri, SendCoinsRecipient *out)
 {
-    // IcebergCoin: check prefix
-    if(uri.scheme() != QString("Icebergcoin"))
+    // CoffeeCoin: check prefix
+    if(uri.scheme() != QString("Coffeecoin"))
         return false;
 
     SendCoinsRecipient rv;
     rv.address = uri.path();
     rv.amount = 0;
+#if QT_VERSION < 0x050000
     QList<QPair<QString, QString> > items = uri.queryItems();
+#else
+    QUrlQuery uriQuery(uri);
+    QList<QPair<QString, QString> > items = uriQuery.queryItems();
+#endif
     for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
     {
         bool fShouldReturnFalse = false;
@@ -103,7 +112,7 @@ bool parseIcebergcoinURI(const QUrl &uri, SendCoinsRecipient *out)
         {
             if(!i->second.isEmpty())
             {
-                if(!IcebergcoinUnits::parse(IcebergcoinUnits::ICB, i->second, &rv.amount))
+                if(!CoffeecoinUnits::parse(CoffeecoinUnits::CFC, i->second, &rv.amount))
                 {
                     return false;
                 }
@@ -121,23 +130,27 @@ bool parseIcebergcoinURI(const QUrl &uri, SendCoinsRecipient *out)
     return true;
 }
 
-bool parseIcebergcoinURI(QString uri, SendCoinsRecipient *out)
+bool parseCoffeecoinURI(QString uri, SendCoinsRecipient *out)
 {
-    // Convert Icebergcoin:// to Icebergcoin:
+    // Convert Coffeecoin:// to Coffeecoin:
     //
-    //    Cannot handle this later, because icebergcoin:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because coffeecoin:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
-    if(uri.startsWith("Icebergcoin://"))
+    if(uri.startsWith("Coffeecoin://"))
     {
-        uri.replace(0, 12, "Icebergcoin:");
+        uri.replace(0, 12, "Coffeecoin:");
     }
     QUrl uriInstance(uri);
-    return parseIcebergcoinURI(uriInstance, out);
+    return parseCoffeecoinURI(uriInstance, out);
 }
 
 QString HtmlEscape(const QString& str, bool fMultiLine)
 {
+#if QT_VERSION < 0x05000
     QString escaped = Qt::escape(str);
+#else
+    QString escaped = str.toHtmlEscaped();
+#endif
     if(fMultiLine)
     {
         escaped = escaped.replace("\n", "<br>\n");
@@ -172,7 +185,11 @@ QString getSaveFileName(QWidget *parent, const QString &caption,
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
+#if QT_VERSION < 0x050000
         myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#else
+        myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
     }
     else
     {
@@ -273,12 +290,12 @@ bool ToolTipToRichTextFilter::eventFilter(QObject *obj, QEvent *evt)
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
-    return GetSpecialFolderPath(CSIDL_STARTUP) / "Icebergcoin.lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / "Coffeecoin.lnk";
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for Icebergcoin.lnk
+    // check for Coffeecoin.lnk
     return boost::filesystem::exists(StartupShortcutPath());
 }
 
@@ -355,7 +372,7 @@ boost::filesystem::path static GetAutostartDir()
 
 boost::filesystem::path static GetAutostartFilePath()
 {
-    return GetAutostartDir() / "Icebergcoin.desktop";
+    return GetAutostartDir() / "Coffeecoin.desktop";
 }
 
 bool GetStartOnSystemStartup()
@@ -393,10 +410,10 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         boost::filesystem::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
         if (!optionFile.good())
             return false;
-        // Write a icebergcoin.desktop file to the autostart directory:
+        // Write a coffeecoin.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
-        optionFile << "Name=Icebergcoin\n";
+        optionFile << "Name=Coffeecoin\n";
         optionFile << "Exec=" << pszExePath << " -min\n";
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -417,10 +434,10 @@ bool SetStartOnSystemStartup(bool fAutoStart) { return false; }
 HelpMessageBox::HelpMessageBox(QWidget *parent) :
     QMessageBox(parent)
 {
-    header = tr("Icebergcoin-Qt") + " " + tr("version") + " " +
+    header = tr("Coffeecoin-Qt") + " " + tr("version") + " " +
         QString::fromStdString(FormatFullVersion()) + "\n\n" +
         tr("Usage:") + "\n" +
-        "  Icebergcoin-qt [" + tr("command-line options") + "]                     " + "\n";
+        "  Coffeecoin-qt [" + tr("command-line options") + "]                     " + "\n";
 
     coreOptions = QString::fromStdString(HelpMessage());
 
@@ -429,7 +446,7 @@ HelpMessageBox::HelpMessageBox(QWidget *parent) :
         "  -min                   " + tr("Start minimized") + "\n" +
         "  -splash                " + tr("Show splash screen on startup (default: 1)") + "\n";
 
-    setWindowTitle(tr("Icebergcoin-Qt"));
+    setWindowTitle(tr("Coffeecoin-Qt"));
     setTextFormat(Qt::PlainText);
     // setMinimumWidth is ignored for QMessageBox so put in non-breaking spaces to make it wider.
     setText(header + QString(QChar(0x2003)).repeated(50));

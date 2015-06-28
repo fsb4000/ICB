@@ -3,9 +3,9 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ICEBERGCOIN_TXDB_H
-#define ICEBERGCOIN_TXDB_H
+#ifndef COFFEECOIN_TXDB_H
+#define COFFEECOIN_TXDB_H
 
 #include "txdb-leveldb.h"
 
-#endif  // ICEBERGCOIN_TXDB_H
+#endif  // COFFEECOIN_TXDB_H

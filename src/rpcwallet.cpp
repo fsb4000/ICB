@@ -5,7 +5,7 @@
 
 #include "wallet.h"
 #include "walletdb.h"
-#include "icebergcoinrpc.h"
+#include "coffeecoinrpc.h"
 #include "init.h"
 #include "base58.h"
 
@@ -144,7 +144,7 @@ Value getnewaddress(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "getnewaddress [account]\n"
-            "Returns a new Icebergcoin address for receiving payments.  "
+            "Returns a new Coffeecoin address for receiving payments.  "
             "If [account] is specified (recommended), it is added to the address book "
             "so payments received with the address will be credited to [account].");
 
@@ -164,11 +164,11 @@ Value getnewaddress(const Array& params, bool fHelp)
 
     pwalletMain->SetAddressBookName(keyID, strAccount);
 
-    return CIcebergcoinAddress(keyID).ToString();
+    return CCoffeecoinAddress(keyID).ToString();
 }
 
 
-CIcebergcoinAddress GetAccountAddress(string strAccount, bool bForceNew=false)
+CCoffeecoinAddress GetAccountAddress(string strAccount, bool bForceNew=false)
 {
     CWalletDB walletdb(pwalletMain->strWalletFile);
 
@@ -203,7 +203,7 @@ CIcebergcoinAddress GetAccountAddress(string strAccount, bool bForceNew=false)
         walletdb.WriteAccount(strAccount, account);
     }
 
-    return CIcebergcoinAddress(account.vchPubKey.GetID());
+    return CCoffeecoinAddress(account.vchPubKey.GetID());
 }
 
 Value getaccountaddress(const Array& params, bool fHelp)
@@ -211,7 +211,7 @@ Value getaccountaddress(const Array& params, bool fHelp)
     if (fHelp || params.size() != 1)
         throw runtime_error(
             "getaccountaddress <account>\n"
-            "Returns the current Icebergcoin address for receiving payments to this account.");
+            "Returns the current Coffeecoin address for receiving payments to this account.");
 
     // Parse the account first so we don't generate a key if there's an error
     string strAccount = AccountFromValue(params[0]);
@@ -229,12 +229,12 @@ Value setaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount <Icebergcoinaddress> <account>\n"
+            "setaccount <Coffeecoinaddress> <account>\n"
             "Sets the account associated with the given address.");
 
-    CIcebergcoinAddress address(params[0].get_str());
+    CCoffeecoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
 
 
     string strAccount;
@@ -259,12 +259,12 @@ Value getaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getaccount <Icebergcoinaddress>\n"
+            "getaccount <Coffeecoinaddress>\n"
             "Returns the account associated with the given address.");
 
-    CIcebergcoinAddress address(params[0].get_str());
+    CCoffeecoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
 
     string strAccount;
     map<CTxDestination, string>::iterator mi = pwalletMain->mapAddressBook.find(address.Get());
@@ -285,9 +285,9 @@ Value getaddressesbyaccount(const Array& params, bool fHelp)
 
     // Find all addresses that have the given account
     Array ret;
-    BOOST_FOREACH(const PAIRTYPE(CIcebergcoinAddress, string)& item, pwalletMain->mapAddressBook)
+    BOOST_FOREACH(const PAIRTYPE(CCoffeecoinAddress, string)& item, pwalletMain->mapAddressBook)
     {
-        const CIcebergcoinAddress& address = item.first;
+        const CCoffeecoinAddress& address = item.first;
         const string& strName = item.second;
         if (strName == strAccount)
             ret.push_back(address.ToString());
@@ -299,13 +299,13 @@ Value sendtoaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-            "sendtoaddress <Icebergcoinaddress> <amount> [comment] [comment-to]\n"
+            "sendtoaddress <Coffeecoinaddress> <amount> [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.000001"
             + HelpRequiringPassphrase());
 
-    CIcebergcoinAddress address(params[0].get_str());
+    CCoffeecoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
 
     // Amount
     int64_t nAmount = AmountFromValue(params[1]);
@@ -344,12 +344,12 @@ Value listaddressgroupings(const Array& params, bool fHelp)
         BOOST_FOREACH(CTxDestination address, grouping)
         {
             Array addressInfo;
-            addressInfo.push_back(CIcebergcoinAddress(address).ToString());
+            addressInfo.push_back(CCoffeecoinAddress(address).ToString());
             addressInfo.push_back(ValueFromAmount(balances[address]));
             {
                 LOCK(pwalletMain->cs_wallet);
-                if (pwalletMain->mapAddressBook.find(CIcebergcoinAddress(address).Get()) != pwalletMain->mapAddressBook.end())
-                    addressInfo.push_back(pwalletMain->mapAddressBook.find(CIcebergcoinAddress(address).Get())->second);
+                if (pwalletMain->mapAddressBook.find(CCoffeecoinAddress(address).Get()) != pwalletMain->mapAddressBook.end())
+                    addressInfo.push_back(pwalletMain->mapAddressBook.find(CCoffeecoinAddress(address).Get())->second);
             }
             jsonGrouping.push_back(addressInfo);
         }
@@ -362,7 +362,7 @@ Value signmessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "signmessage <Icebergcoinaddress> <message>\n"
+            "signmessage <Coffeecoinaddress> <message>\n"
             "Sign a message with the private key of an address");
 
     EnsureWalletIsUnlocked();
@@ -370,7 +370,7 @@ Value signmessage(const Array& params, bool fHelp)
     string strAddress = params[0].get_str();
     string strMessage = params[1].get_str();
 
-    CIcebergcoinAddress addr(strAddress);
+    CCoffeecoinAddress addr(strAddress);
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 
@@ -397,14 +397,14 @@ Value verifymessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 3)
         throw runtime_error(
-            "verifymessage <Icebergcoinaddress> <signature> <message>\n"
+            "verifymessage <Coffeecoinaddress> <signature> <message>\n"
             "Verify a signed message");
 
     string strAddress  = params[0].get_str();
     string strSign     = params[1].get_str();
     string strMessage  = params[2].get_str();
 
-    CIcebergcoinAddress addr(strAddress);
+    CCoffeecoinAddress addr(strAddress);
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 
@@ -434,14 +434,14 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress <Icebergcoinaddress> [minconf=1]\n"
-            "Returns the total amount received by <Icebergcoinaddress> in transactions with at least [minconf] confirmations.");
+            "getreceivedbyaddress <Coffeecoinaddress> [minconf=1]\n"
+            "Returns the total amount received by <Coffeecoinaddress> in transactions with at least [minconf] confirmations.");
 
-    // Icebergcoin address
-    CIcebergcoinAddress address = CIcebergcoinAddress(params[0].get_str());
+    // Coffeecoin address
+    CCoffeecoinAddress address = CCoffeecoinAddress(params[0].get_str());
     CScript scriptPubKey;
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
     scriptPubKey.SetDestination(address.Get());
     if (!IsMine(*pwalletMain,scriptPubKey))
         return (double)0.0;
@@ -662,14 +662,14 @@ Value sendfrom(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-            "sendfrom <fromaccount> <toIcebergcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
+            "sendfrom <fromaccount> <toCoffeecoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.000001"
             + HelpRequiringPassphrase());
 
     string strAccount = AccountFromValue(params[0]);
-    CIcebergcoinAddress address(params[1].get_str());
+    CCoffeecoinAddress address(params[1].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
     int64_t nAmount = AmountFromValue(params[2]);
 
     int nMinDepth = 1;
@@ -718,15 +718,15 @@ Value sendmany(const Array& params, bool fHelp)
     if (params.size() > 3 && params[3].type() != null_type && !params[3].get_str().empty())
         wtx.mapValue["comment"] = params[3].get_str();
 
-    set<CIcebergcoinAddress> setAddress;
+    set<CCoffeecoinAddress> setAddress;
     vector<pair<CScript, int64_t> > vecSend;
 
     int64_t totalAmount = 0;
     BOOST_FOREACH(const Pair& s, sendTo)
     {
-        CIcebergcoinAddress address(s.name_);
+        CCoffeecoinAddress address(s.name_);
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Icebergcoin address: ")+s.name_);
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Coffeecoin address: ")+s.name_);
 
         if (setAddress.count(address))
             throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+s.name_);
@@ -770,7 +770,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     {
         string msg = "addmultisigaddress <nrequired> <'[\"key\",\"key\"]'> [account]\n"
             "Add a nrequired-to-sign multisignature address to the wallet\"\n"
-            "each key is a Icebergcoin address or hex-encoded public key\n"
+            "each key is a Coffeecoin address or hex-encoded public key\n"
             "If [account] is specified, assign address to [account].";
         throw runtime_error(msg);
     }
@@ -794,8 +794,8 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     {
         const std::string& ks = keys[i].get_str();
 
-        // Case 1: Icebergcoin address and we have full public key:
-        CIcebergcoinAddress address(ks);
+        // Case 1: Coffeecoin address and we have full public key:
+        CCoffeecoinAddress address(ks);
         if (address.IsValid())
         {
             CKeyID keyID;
@@ -830,7 +830,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     pwalletMain->AddCScript(inner);
 
     pwalletMain->SetAddressBookName(innerID, strAccount);
-    return CIcebergcoinAddress(innerID).ToString();
+    return CCoffeecoinAddress(innerID).ToString();
 }
 
 Value addredeemscript(const Array& params, bool fHelp)
@@ -854,7 +854,7 @@ Value addredeemscript(const Array& params, bool fHelp)
     pwalletMain->AddCScript(inner);
 
     pwalletMain->SetAddressBookName(innerID, strAccount);
-    return CIcebergcoinAddress(innerID).ToString();
+    return CCoffeecoinAddress(innerID).ToString();
 }
 
 struct tallyitem
@@ -881,7 +881,7 @@ Value ListReceived(const Array& params, bool fByAccounts)
         fIncludeEmpty = params[1].get_bool();
 
     // Tally
-    map<CIcebergcoinAddress, tallyitem> mapTally;
+    map<CCoffeecoinAddress, tallyitem> mapTally;
     for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it)
     {
         const CWalletTx& wtx = (*it).second;
@@ -908,11 +908,11 @@ Value ListReceived(const Array& params, bool fByAccounts)
     // Reply
     Array ret;
     map<string, tallyitem> mapAccountTally;
-    BOOST_FOREACH(const PAIRTYPE(CIcebergcoinAddress, string)& item, pwalletMain->mapAddressBook)
+    BOOST_FOREACH(const PAIRTYPE(CCoffeecoinAddress, string)& item, pwalletMain->mapAddressBook)
     {
-        const CIcebergcoinAddress& address = item.first;
+        const CCoffeecoinAddress& address = item.first;
         const string& strAccount = item.second;
-        map<CIcebergcoinAddress, tallyitem>::iterator it = mapTally.find(address);
+        map<CCoffeecoinAddress, tallyitem>::iterator it = mapTally.find(address);
         if (it == mapTally.end() && !fIncludeEmpty)
             continue;
 
@@ -993,7 +993,7 @@ Value listreceivedbyaccount(const Array& params, bool fHelp)
 
 static void MaybePushAddress(Object & entry, const CTxDestination &dest)
 {
-    CIcebergcoinAddress addr;
+    CCoffeecoinAddress addr;
     if (addr.Set(dest))
         entry.push_back(Pair("address", addr.ToString()));
 }
@@ -1371,7 +1371,7 @@ Value keypoolrefill(const Array& params, bool fHelp)
 void ThreadTopUpKeyPool(void* parg)
 {
     // Make this thread recognisable as the key-topping-up thread
-    RenameThread("Icebergcoin-key-top");
+    RenameThread("Coffeecoin-key-top");
 
     pwalletMain->TopUpKeyPool();
 }
@@ -1379,7 +1379,7 @@ void ThreadTopUpKeyPool(void* parg)
 void ThreadCleanWalletPassphrase(void* parg)
 {
     // Make this thread recognisable as the wallet relocking thread
-    RenameThread("Icebergcoin-lock-wa");
+    RenameThread("Coffeecoin-lock-wa");
 
     int64_t nMyWakeTime = GetTimeMillis() + *((int64_t*)parg) * 1000;
 
@@ -1455,7 +1455,7 @@ Value walletpassphrase(const Array& params, bool fHelp)
     int64_t* pnSleepTime = new int64_t(params[1].get_int64());
     NewThread(ThreadCleanWalletPassphrase, pnSleepTime);
 
-    // icebergcoin: if user OS account compromised prevent trivial sendmoney commands
+    // coffeecoin: if user OS account compromised prevent trivial sendmoney commands
     if (params.size() > 2)
         fWalletUnlockStakingOnly = params[2].get_bool();
     else
@@ -1550,7 +1550,7 @@ Value encryptwallet(const Array& params, bool fHelp)
     // slack space in .dat files; that is bad if the old data is
     // unencrypted private keys. So:
     StartShutdown();
-    return "wallet encrypted; Icebergcoin server stopping, restart to run with encrypted wallet.  The keypool has been flushed, you need to make a new backup.";
+    return "wallet encrypted; Coffeecoin server stopping, restart to run with encrypted wallet.  The keypool has been flushed, you need to make a new backup.";
 }
 
 class DescribeAddressVisitor : public boost::static_visitor<Object>
@@ -1581,7 +1581,7 @@ public:
         obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
         Array a;
         BOOST_FOREACH(const CTxDestination& addr, addresses)
-            a.push_back(CIcebergcoinAddress(addr).ToString());
+            a.push_back(CCoffeecoinAddress(addr).ToString());
         obj.push_back(Pair("addresses", a));
         if (whichType == TX_MULTISIG)
             obj.push_back(Pair("sigsrequired", nRequired));
@@ -1593,10 +1593,10 @@ Value validateaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "validateaddress <Icebergcoinaddress>\n"
-            "Return information about <Icebergcoinaddress>.");
+            "validateaddress <Coffeecoinaddress>\n"
+            "Return information about <Coffeecoinaddress>.");
 
-    CIcebergcoinAddress address(params[0].get_str());
+    CCoffeecoinAddress address(params[0].get_str());
     bool isValid = address.IsValid();
 
     Object ret;
@@ -1622,8 +1622,8 @@ Value validatepubkey(const Array& params, bool fHelp)
 {
     if (fHelp || !params.size() || params.size() > 2)
         throw runtime_error(
-            "validatepubkey <Icebergcoinpubkey>\n"
-            "Return information about <Icebergcoinpubkey>.");
+            "validatepubkey <Coffeecoinpubkey>\n"
+            "Return information about <Coffeecoinpubkey>.");
 
     std::vector<unsigned char> vchPubKey = ParseHex(params[0].get_str());
     CPubKey pubKey(vchPubKey);
@@ -1632,7 +1632,7 @@ Value validatepubkey(const Array& params, bool fHelp)
     bool isCompressed = pubKey.IsCompressed();
     CKeyID keyID = pubKey.GetID();
 
-    CIcebergcoinAddress address;
+    CCoffeecoinAddress address;
     address.Set(keyID);
 
     Object ret;
@@ -1655,7 +1655,7 @@ Value validatepubkey(const Array& params, bool fHelp)
     return ret;
 }
 
-// icebergcoin: reserve balance from being staked for network protection
+// coffeecoin: reserve balance from being staked for network protection
 Value reservebalance(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 2)
@@ -1694,7 +1694,7 @@ Value reservebalance(const Array& params, bool fHelp)
 }
 
 
-// icebergcoin: check wallet integrity
+// coffeecoin: check wallet integrity
 Value checkwallet(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 0)
@@ -1717,7 +1717,7 @@ Value checkwallet(const Array& params, bool fHelp)
 }
 
 
-// icebergcoin: repair wallet
+// coffeecoin: repair wallet
 Value repairwallet(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 0)
@@ -1739,7 +1739,7 @@ Value repairwallet(const Array& params, bool fHelp)
     return result;
 }
 
-// IcebergCoin: resend unconfirmed wallet transactions
+// CoffeeCoin: resend unconfirmed wallet transactions
 Value resendtx(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 1)
@@ -1753,7 +1753,7 @@ Value resendtx(const Array& params, bool fHelp)
     return Value::null;
 }
 
-// icebergcoin: make a public-private key pair
+// coffeecoin: make a public-private key pair
 Value makekeypair(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 1)

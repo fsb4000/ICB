@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "ui_interface.h"
 #include "init.h"
-#include "icebergcoinrpc.h"
+#include "coffeecoinrpc.h"
 
 #include <string>
 
@@ -22,7 +22,7 @@ static bool noui_ThreadSafeAskFee(int64_t nFeeRequired, const std::string& strCa
 
 void noui_connect()
 {
-    // Connect icebergcoind signal handlers
+    // Connect coffeecoind signal handlers
     uiInterface.ThreadSafeMessageBox.connect(noui_ThreadSafeMessageBox);
     uiInterface.ThreadSafeAskFee.connect(noui_ThreadSafeAskFee);
 }

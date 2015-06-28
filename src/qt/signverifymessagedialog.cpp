@@ -24,11 +24,11 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
 
 #if (QT_VERSION >= 0x040700)
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->addressIn_SM->setPlaceholderText(tr("Enter a Icebergcoin address (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)"));
+    ui->addressIn_SM->setPlaceholderText(tr("Enter a Coffeecoin address (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)"));
     ui->signatureOut_SM->setPlaceholderText(tr("Click \"Sign Message\" to generate signature"));
 
-    ui->addressIn_VM->setPlaceholderText(tr("Enter a Icebergcoin address (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)"));
-    ui->signatureIn_VM->setPlaceholderText(tr("Enter Icebergcoin signature"));
+    ui->addressIn_VM->setPlaceholderText(tr("Enter a Coffeecoin address (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)"));
+    ui->signatureIn_VM->setPlaceholderText(tr("Enter Coffeecoin signature"));
 #endif
 
     GUIUtil::setupAddressWidget(ui->addressIn_SM, this);
@@ -41,8 +41,8 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
     ui->messageIn_VM->installEventFilter(this);
     ui->signatureIn_VM->installEventFilter(this);
 
-    ui->signatureOut_SM->setFont(GUIUtil::icebergcoinAddressFont());
-    ui->signatureIn_VM->setFont(GUIUtil::icebergcoinAddressFont());
+    ui->signatureOut_SM->setFont(GUIUtil::coffeecoinAddressFont());
+    ui->signatureIn_VM->setFont(GUIUtil::coffeecoinAddressFont());
 }
 
 SignVerifyMessageDialog::~SignVerifyMessageDialog()
@@ -105,7 +105,7 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
     /* Clear old signature to ensure users don't get confused on error with an old signature displayed */
     ui->signatureOut_SM->clear();
 
-    CIcebergcoinAddress addr(ui->addressIn_SM->text().toStdString());
+    CCoffeecoinAddress addr(ui->addressIn_SM->text().toStdString());
     if (!addr.IsValid())
     {
         ui->addressIn_SM->setValid(false);
@@ -186,7 +186,7 @@ void SignVerifyMessageDialog::on_addressBookButton_VM_clicked()
 
 void SignVerifyMessageDialog::on_verifyMessageButton_VM_clicked()
 {
-    CIcebergcoinAddress addr(ui->addressIn_VM->text().toStdString());
+    CCoffeecoinAddress addr(ui->addressIn_VM->text().toStdString());
     if (!addr.IsValid())
     {
         ui->addressIn_VM->setValid(false);
@@ -227,7 +227,7 @@ void SignVerifyMessageDialog::on_verifyMessageButton_VM_clicked()
         return;
     }
 
-    if (!(CIcebergcoinAddress(key.GetPubKey().GetID()) == addr))
+    if (!(CCoffeecoinAddress(key.GetPubKey().GetID()) == addr))
     {
         ui->statusLabel_VM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_VM->setText(QString("<nobr>") + tr("Message verification failed.") + QString("</nobr>"));

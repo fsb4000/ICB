@@ -6,7 +6,7 @@
 #include "addresstablemodel.h"
 #include "addressbookpage.h"
 
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 #include "addressbookpage.h"
 #include "optionsmodel.h"
 #include "sendcoinsentry.h"
@@ -37,7 +37,7 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
 
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a Icebergcoin address (e.g. IcebergcoinfwYhBmGXcFP2Po1NpRUEiK8km2)"));
+    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a Coffeecoin address (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)"));
 #endif
 
     addEntry();
@@ -46,7 +46,7 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clear()));
 
     // Coin Control
-    ui->lineEditCoinControlChange->setFont(GUIUtil::icebergcoinAddressFont());
+    ui->lineEditCoinControlChange->setFont(GUIUtil::coffeecoinAddressFont());
     connect(ui->pushButtonCoinControl, SIGNAL(clicked()), this, SLOT(coinControlButtonClicked()));
     connect(ui->checkBoxCoinControlChange, SIGNAL(stateChanged(int)), this, SLOT(coinControlChangeChecked(int)));
     connect(ui->lineEditCoinControlChange, SIGNAL(textEdited(const QString &)), this, SLOT(coinControlChangeEdited(const QString &)));
@@ -145,7 +145,11 @@ void SendCoinsDialog::on_sendButton_clicked()
     QStringList formatted;
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
-        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, rcp.amount), Qt::escape(rcp.label), rcp.address));
+#if QT_VERSION < 0x050000
+        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, rcp.amount), Qt::escape(rcp.label), rcp.address));
+#else
+        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
+#endif
     }
 
     fNewRecipientAllowed = false;
@@ -196,7 +200,7 @@ void SendCoinsDialog::on_sendButton_clicked()
     case WalletModel::AmountWithFeeExceedsBalance:
         QMessageBox::warning(this, tr("Send Coins"),
             tr("The total exceeds your balance when the %1 transaction fee is included.").
-            arg(IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, sendstatus.fee)),
+            arg(CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, sendstatus.fee)),
             QMessageBox::Ok, QMessageBox::Ok);
         break;
     case WalletModel::DuplicateAddress:
@@ -334,9 +338,9 @@ bool SendCoinsDialog::handleURI(const QString &uri)
 {
     SendCoinsRecipient rv;
     // URI has to be valid
-    if (GUIUtil::parseIcebergcoinURI(uri, &rv))
+    if (GUIUtil::parseCoffeecoinURI(uri, &rv))
     {
-        CIcebergcoinAddress address(rv.address.toStdString());
+        CCoffeecoinAddress address(rv.address.toStdString());
         if (!address.IsValid())
             return false;
         pasteEntry(rv);
@@ -355,7 +359,7 @@ void SendCoinsDialog::setBalance(qint64 balance, qint64 stake, qint64 unconfirme
         return;
 
     int unit = model->getOptionsModel()->getDisplayUnit();
-    ui->labelBalance->setText(IcebergcoinUnits::formatWithUnit(unit, balance));
+    ui->labelBalance->setText(CoffeecoinUnits::formatWithUnit(unit, balance));
 }
 
 void SendCoinsDialog::updateDisplayUnit()
@@ -363,7 +367,7 @@ void SendCoinsDialog::updateDisplayUnit()
     if(model && model->getOptionsModel())
     {
         // Update labelBalance with the current balance and the current unit
-        ui->labelBalance->setText(IcebergcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), model->getBalance()));
+        ui->labelBalance->setText(CoffeecoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), model->getBalance()));
     }
 }
 
@@ -439,7 +443,7 @@ void SendCoinsDialog::coinControlChangeChecked(int state)
     if (model)
     {
         if (state == Qt::Checked)
-            CoinControlDialog::coinControl->destChange = CIcebergcoinAddress(ui->lineEditCoinControlChange->text().toStdString()).Get();
+            CoinControlDialog::coinControl->destChange = CCoffeecoinAddress(ui->lineEditCoinControlChange->text().toStdString()).Get();
         else
             CoinControlDialog::coinControl->destChange = CNoDestination();
     }
@@ -453,16 +457,16 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
 {
     if (model)
     {
-        CoinControlDialog::coinControl->destChange = CIcebergcoinAddress(text.toStdString()).Get();
+        CoinControlDialog::coinControl->destChange = CCoffeecoinAddress(text.toStdString()).Get();
 
         // label for the change address
         ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:black;}");
         if (text.isEmpty())
             ui->labelCoinControlChangeLabel->setText("");
-        else if (!CIcebergcoinAddress(text.toStdString()).IsValid())
+        else if (!CCoffeecoinAddress(text.toStdString()).IsValid())
         {
             ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:red;}");
-            ui->labelCoinControlChangeLabel->setText(tr("WARNING: Invalid Icebergcoin address"));
+            ui->labelCoinControlChangeLabel->setText(tr("WARNING: Invalid Coffeecoin address"));
         }
         else
         {
@@ -473,7 +477,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
             {
                 CPubKey pubkey;
                 CKeyID keyid;
-                CIcebergcoinAddress(text.toStdString()).GetKeyID(keyid);   
+                CCoffeecoinAddress(text.toStdString()).GetKeyID(keyid);   
                 if (model->getPubKey(keyid, pubkey))
                     ui->labelCoinControlChangeLabel->setText(tr("(no label)"));
                 else

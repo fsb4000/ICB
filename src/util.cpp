@@ -960,7 +960,7 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "Icebergcoin";
+    const char* pszModule = "Coffeecoin";
 #endif
     if (pex)
         return strprintf(
@@ -1009,13 +1009,13 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Icebergcoin
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Icebergcoin
-    // Mac: ~/Library/Application Support/Icebergcoin
-    // Unix: ~/.icebergcoin
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Coffeecoin
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Coffeecoin
+    // Mac: ~/Library/Application Support/Coffeecoin
+    // Unix: ~/.coffeecoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Icebergcoin";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "Coffeecoin";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -1027,10 +1027,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     fs::create_directory(pathRet);
-    return pathRet / "Icebergcoin";
+    return pathRet / "Coffeecoin";
 #else
     // Unix
-    return pathRet / ".icebergcoin";
+    return pathRet / ".coffeecoin";
 #endif
 #endif
 }
@@ -1072,7 +1072,7 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "Icebergcoin.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("-conf", "Coffeecoin.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
     return pathConfigFile;
 }
@@ -1082,14 +1082,14 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 {
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good())
-        return; // No icebergcoin.conf file is OK
+        return; // No coffeecoin.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override icebergcoin.conf
+        // Don't overwrite existing settings so command line settings override coffeecoin.conf
         string strKey = string("-") + it->string_key;
         if (mapSettingsRet.count(strKey) == 0)
         {
@@ -1103,7 +1103,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "Icebergcoind.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "Coffeecoind.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
@@ -1233,10 +1233,10 @@ void AddTimeData(const CNetAddr& ip, int64_t nTime)
                 if (!fMatch)
                 {
                     fDone = true;
-                    string strMessage = _("Warning: Please check that your computer's date and time are correct! If your clock is wrong Icebergcoin will not work properly.");
+                    string strMessage = _("Warning: Please check that your computer's date and time are correct! If your clock is wrong Coffeecoin will not work properly.");
                     strMiscWarning = strMessage;
                     printf("*** %s\n", strMessage.c_str());
-                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("Icebergcoin"), CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION);
+                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("Coffeecoin"), CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION);
                 }
             }
         }
@@ -1269,7 +1269,7 @@ string FormatFullVersion()
     return CLIENT_BUILD;
 }
 
-// Format the subversion field according to BIP 14 spec (https://en.icebergcoin.it/wiki/BIP_0014)
+// Format the subversion field according to BIP 14 spec (https://en.coffeecoin.it/wiki/BIP_0014)
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments)
 {
     std::ostringstream ss;

@@ -46,9 +46,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 sub.credit = txout.nValue;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
                 {
-                    // Received by Icebergcoin Address
+                    // Received by Coffeecoin Address
                     sub.type = TransactionRecord::RecvWithAddress;
-                    sub.address = CIcebergcoinAddress(address).ToString();
+                    sub.address = CCoffeecoinAddress(address).ToString();
                 }
                 else
                 {
@@ -118,9 +118,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 CTxDestination address;
                 if (ExtractDestination(txout.scriptPubKey, address))
                 {
-                    // Sent to Icebergcoin Address
+                    // Sent to Coffeecoin Address
                     sub.type = TransactionRecord::SendToAddress;
-                    sub.address = CIcebergcoinAddress(address).ToString();
+                    sub.address = CCoffeecoinAddress(address).ToString();
                 }
                 else
                 {

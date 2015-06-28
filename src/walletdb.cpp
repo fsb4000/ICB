@@ -213,7 +213,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CIcebergcoinAddress(strAddress).Get()];
+            ssValue >> pwallet->mapAddressBook[CCoffeecoinAddress(strAddress).Get()];
         }
         else if (strType == "tx")
         {
@@ -533,7 +533,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
 void ThreadFlushWalletDB(void* parg)
 {
     // Make this thread recognisable as the wallet flushing thread
-    RenameThread("Icebergcoin-wallet");
+    RenameThread("Coffeecoin-wallet");
 
     const string& strFile = ((const string*)parg)[0];
     static bool fOneThread;

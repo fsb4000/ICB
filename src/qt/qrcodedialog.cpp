@@ -1,7 +1,7 @@
 #include "qrcodedialog.h"
 #include "ui_qrcodedialog.h"
 
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 #include "guiconstants.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
@@ -44,7 +44,7 @@ void QRCodeDialog::setModel(OptionsModel *model)
     if (model)
         connect(model, SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
 
-    // update the display unit, to not use the default ("ICB")
+    // update the display unit, to not use the default ("CFC")
     updateDisplayUnit();
 }
 
@@ -83,7 +83,7 @@ void QRCodeDialog::genCode()
 
 QString QRCodeDialog::getURI()
 {
-    QString ret = QString("Icebergcoin:%1").arg(address);
+    QString ret = QString("Coffeecoin:%1").arg(address);
     int paramCount = 0;
 
     ui->outUri->clear();
@@ -92,8 +92,8 @@ QString QRCodeDialog::getURI()
     {
         if (ui->lnReqAmount->validate())
         {
-            // even if we allow a non ICB unit input in lnReqAmount, we generate the URI with ICB as unit (as defined in BIP21)
-            ret += QString("?amount=%1").arg(IcebergcoinUnits::format(IcebergcoinUnits::ICB, ui->lnReqAmount->value()));
+            // even if we allow a non CFC unit input in lnReqAmount, we generate the URI with CFC as unit (as defined in BIP21)
+            ret += QString("?amount=%1").arg(CoffeecoinUnits::format(CoffeecoinUnits::CFC, ui->lnReqAmount->value()));
             paramCount++;
         }
         else

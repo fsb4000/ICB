@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Icebergcoin team
+// Copyright (c) 2014 Coffeecoin team
 
 #ifndef PBKDF2_H
 #define PBKDF2_H

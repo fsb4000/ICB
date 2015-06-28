@@ -140,7 +140,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="IcebergcoinAmountField" name="lnReqAmount">
+         <widget class="CoffeecoinAmountField" name="lnReqAmount">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -185,9 +185,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>IcebergcoinAmountField</class>
+   <class>CoffeecoinAmountField</class>
    <extends>QSpinBox</extends>
-   <header>icebergcoinamountfield.h</header>
+   <header>coffeecoinamountfield.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

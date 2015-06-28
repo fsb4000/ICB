@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Icebergcoin team
+// Copyright (c) 2014 Coffeecoin team
 
 #include <string.h>
 #include "pbkdf2.h"

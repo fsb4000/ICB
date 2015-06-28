@@ -12,8 +12,8 @@
 // - E-mail usually won't line-break if there's no punctuation to break at.
 // - Double-clicking selects the whole number as one word if it's all alphanumeric.
 //
-#ifndef ICEBERGCOIN_BASE58_H
-#define ICEBERGCOIN_BASE58_H
+#ifndef COFFEECOIN_BASE58_H
+#define COFFEECOIN_BASE58_H
 
 #include <string>
 #include <vector>
@@ -259,19 +259,19 @@ public:
  * Script-hash-addresses have version 85 (or 196 testnet).
  * The data vector contains RIPEMD160(SHA256(cscript)), where cscript is the serialized redemption script.
  */
-class CIcebergcoinAddress;
-class CIcebergcoinAddressVisitor : public boost::static_visitor<bool>
+class CCoffeecoinAddress;
+class CCoffeecoinAddressVisitor : public boost::static_visitor<bool>
 {
 private:
-    CIcebergcoinAddress *addr;
+    CCoffeecoinAddress *addr;
 public:
-    CIcebergcoinAddressVisitor(CIcebergcoinAddress *addrIn) : addr(addrIn) { }
+    CCoffeecoinAddressVisitor(CCoffeecoinAddress *addrIn) : addr(addrIn) { }
     bool operator()(const CKeyID &id) const;
     bool operator()(const CScriptID &id) const;
     bool operator()(const CNoDestination &no) const;
 };
 
-class CIcebergcoinAddress : public CBase58Data
+class CCoffeecoinAddress : public CBase58Data
 {
 public:
     enum
@@ -294,7 +294,7 @@ public:
 
     bool Set(const CTxDestination &dest)
     {
-        return boost::apply_visitor(CIcebergcoinAddressVisitor(this), dest);
+        return boost::apply_visitor(CCoffeecoinAddressVisitor(this), dest);
     }
 
     bool IsValid() const
@@ -327,21 +327,21 @@ public:
         return fExpectTestNet == fTestNet && vchData.size() == nExpectedSize;
     }
 
-    CIcebergcoinAddress()
+    CCoffeecoinAddress()
     {
     }
 
-    CIcebergcoinAddress(const CTxDestination &dest)
+    CCoffeecoinAddress(const CTxDestination &dest)
     {
         Set(dest);
     }
 
-    CIcebergcoinAddress(const std::string& strAddress)
+    CCoffeecoinAddress(const std::string& strAddress)
     {
         SetString(strAddress);
     }
 
-    CIcebergcoinAddress(const char* pszAddress)
+    CCoffeecoinAddress(const char* pszAddress)
     {
         SetString(pszAddress);
     }
@@ -394,18 +394,18 @@ public:
     }
 };
 
-bool inline CIcebergcoinAddressVisitor::operator()(const CKeyID &id) const         { return addr->Set(id); }
-bool inline CIcebergcoinAddressVisitor::operator()(const CScriptID &id) const      { return addr->Set(id); }
-bool inline CIcebergcoinAddressVisitor::operator()(const CNoDestination &id) const { return false; }
+bool inline CCoffeecoinAddressVisitor::operator()(const CKeyID &id) const         { return addr->Set(id); }
+bool inline CCoffeecoinAddressVisitor::operator()(const CScriptID &id) const      { return addr->Set(id); }
+bool inline CCoffeecoinAddressVisitor::operator()(const CNoDestination &id) const { return false; }
 
 /** A base58-encoded secret key */
-class CIcebergcoinSecret : public CBase58Data
+class CCoffeecoinSecret : public CBase58Data
 {
 public:
     void SetSecret(const CSecret& vchSecret, bool fCompressed)
     {
         assert(vchSecret.size() == 32);
-        SetData(128 + (fTestNet ? CIcebergcoinAddress::PUBKEY_ADDRESS_TEST : CIcebergcoinAddress::PUBKEY_ADDRESS), &vchSecret[0], vchSecret.size());
+        SetData(128 + (fTestNet ? CCoffeecoinAddress::PUBKEY_ADDRESS_TEST : CCoffeecoinAddress::PUBKEY_ADDRESS), &vchSecret[0], vchSecret.size());
         if (fCompressed)
             vchData.push_back(1);
     }
@@ -424,10 +424,10 @@ public:
         bool fExpectTestNet = false;
         switch(nVersion)
         {
-            case (128 + CIcebergcoinAddress::PUBKEY_ADDRESS):
+            case (128 + CCoffeecoinAddress::PUBKEY_ADDRESS):
                 break;
 
-            case (128 + CIcebergcoinAddress::PUBKEY_ADDRESS_TEST):
+            case (128 + CCoffeecoinAddress::PUBKEY_ADDRESS_TEST):
                 fExpectTestNet = true;
                 break;
 
@@ -447,12 +447,12 @@ public:
         return SetString(strSecret.c_str());
     }
 
-    CIcebergcoinSecret(const CSecret& vchSecret, bool fCompressed)
+    CCoffeecoinSecret(const CSecret& vchSecret, bool fCompressed)
     {
         SetSecret(vchSecret, fCompressed);
     }
 
-    CIcebergcoinSecret()
+    CCoffeecoinSecret()
     {
     }
 };

@@ -1,7 +1,7 @@
 * update translations (ping tcatm on IRC for now)
 
 * update (commit) version in sources
-  icebergcoin-qt.pro
+  coffeecoin-qt.pro
   src/version.h
   share/setup.nsi
   doc/README*
@@ -16,7 +16,7 @@
 
 * perform gitian builds
 
-  * From a directory containing the icebergcoin source, gitian-builder and gitian.sigs
+  * From a directory containing the coffeecoin source, gitian-builder and gitian.sigs
    export SIGNER=(your gitian key, ie bluematt, sipa, etc)
    export VERSION=0.5.1
    cd ./gitian-builder
@@ -32,61 +32,61 @@
    wget 'http://downloads.sourceforge.net/project/boost/boost/1.47.0/boost_1_47_0.tar.bz2'
    wget 'http://download.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz'
    cd ..
-   ./bin/gbuild ../icebergcoin/contrib/gitian-descriptors/boost-win32.yml
+   ./bin/gbuild ../coffeecoin/contrib/gitian-descriptors/boost-win32.yml
    cp build/out/boost-win32-1.47.0-gitian.zip inputs/
-   ./bin/gbuild ../icebergcoin/contrib/gitian-descriptors/qt-win32.yml
+   ./bin/gbuild ../coffeecoin/contrib/gitian-descriptors/qt-win32.yml
    cp build/out/qt-win32-4.7.4-gitian.zip inputs/
-   ./bin/gbuild ../icebergcoin/contrib/gitian-descriptors/deps-win32.yml
-   cp build/out/icebergcoin-deps-0.0.3.zip inputs/
+   ./bin/gbuild ../coffeecoin/contrib/gitian-descriptors/deps-win32.yml
+   cp build/out/coffeecoin-deps-0.0.3.zip inputs/
 
-  * Build icebergcoind and icebergcoin-qt on Linux32, Linux64, and Win32:
-   ./bin/gbuild --commit icebergcoin=v${VERSION} ../icebergcoin/contrib/gitian-descriptors/gitian.yml
-   ./bin/gsign --signer $SIGNER --release ${VERSION} --destination ../gitian.sigs/ ../icebergcoin/contrib/gitian-descriptors/gitian.yml
+  * Build coffeecoind and coffeecoin-qt on Linux32, Linux64, and Win32:
+   ./bin/gbuild --commit coffeecoin=v${VERSION} ../coffeecoin/contrib/gitian-descriptors/gitian.yml
+   ./bin/gsign --signer $SIGNER --release ${VERSION} --destination ../gitian.sigs/ ../coffeecoin/contrib/gitian-descriptors/gitian.yml
    pushd build/out
-   zip -r icebergcoin-${VERSION}-linux-gitian.zip *
-   mv icebergcoin-${VERSION}-linux-gitian.zip ../../
+   zip -r coffeecoin-${VERSION}-linux-gitian.zip *
+   mv coffeecoin-${VERSION}-linux-gitian.zip ../../
    popd
-   ./bin/gbuild --commit icebergcoin=v${VERSION} ../icebergcoin/contrib/gitian-descriptors/gitian-win32.yml
-   ./bin/gsign --signer $SIGNER --release ${VERSION}-win32 --destination ../gitian.sigs/ ../icebergcoin/contrib/gitian-descriptors/gitian-win32.yml
+   ./bin/gbuild --commit coffeecoin=v${VERSION} ../coffeecoin/contrib/gitian-descriptors/gitian-win32.yml
+   ./bin/gsign --signer $SIGNER --release ${VERSION}-win32 --destination ../gitian.sigs/ ../coffeecoin/contrib/gitian-descriptors/gitian-win32.yml
    pushd build/out
-   zip -r icebergcoin-${VERSION}-win32-gitian.zip *
-   mv icebergcoin-${VERSION}-win32-gitian.zip ../../
+   zip -r coffeecoin-${VERSION}-win32-gitian.zip *
+   mv coffeecoin-${VERSION}-win32-gitian.zip ../../
    popd
 
   Build output expected:
-  1. linux 32-bit and 64-bit binaries + source (icebergcoin-${VERSION}-linux-gitian.zip)
-  2. windows 32-bit binary, installer + source (icebergcoin-${VERSION}-win32-gitian.zip)
+  1. linux 32-bit and 64-bit binaries + source (coffeecoin-${VERSION}-linux-gitian.zip)
+  2. windows 32-bit binary, installer + source (coffeecoin-${VERSION}-win32-gitian.zip)
   3. Gitian signatures (in gitian.sigs/${VERSION}[-win32]/(your gitian key)/
 
 * repackage gitian builds for release as stand-alone zip/tar/installer exe
 
   * Linux .tar.gz:
-   unzip icebergcoin-${VERSION}-linux-gitian.zip -d icebergcoin-${VERSION}-linux
-   tar czvf icebergcoin-${VERSION}-linux.tar.gz icebergcoin-${VERSION}-linux
-   rm -rf icebergcoin-${VERSION}-linux
+   unzip coffeecoin-${VERSION}-linux-gitian.zip -d coffeecoin-${VERSION}-linux
+   tar czvf coffeecoin-${VERSION}-linux.tar.gz coffeecoin-${VERSION}-linux
+   rm -rf coffeecoin-${VERSION}-linux
 
   * Windows .zip and setup.exe:
-   unzip icebergcoin-${VERSION}-win32-gitian.zip -d icebergcoin-${VERSION}-win32
-   mv icebergcoin-${VERSION}-win32/icebergcoin-*-setup.exe .
-   zip -r icebergcoin-${VERSION}-win32.zip icebergcoin-${VERSION}-win32
-   rm -rf icebergcoin-${VERSION}-win32
+   unzip coffeecoin-${VERSION}-win32-gitian.zip -d coffeecoin-${VERSION}-win32
+   mv coffeecoin-${VERSION}-win32/coffeecoin-*-setup.exe .
+   zip -r coffeecoin-${VERSION}-win32.zip coffeecoin-${VERSION}-win32
+   rm -rf coffeecoin-${VERSION}-win32
 
 * perform Mac build
   See this blog post for how Gavin set up his build environment to build the OSX
   release; note that a patched version of macdeployqt is not needed anymore, as
   the required functionality and fixes are implemented directly in macdeployqtplus:
-    http://gavintech.blogspot.com/2011/11/deploying-icebergcoin-qt-on-osx.html
+    http://gavintech.blogspot.com/2011/11/deploying-coffeecoin-qt-on-osx.html
   Gavin also had trouble with the macports py27-appscript package; he
   ended up installing a version that worked with: /usr/bin/easy_install-2.7 appscript
 
-  qmake RELEASE=1 USE_UPNP=1 USE_QRCODE=1 icebergcoin-qt.pro
+  qmake RELEASE=1 USE_UPNP=1 USE_QRCODE=1 coffeecoin-qt.pro
   make
   export QTDIR=/opt/local/share/qt4  # needed to find translations/qt_*.qm files
   T=$(contrib/qt_translations.py $QTDIR/translations src/qt/locale)
-  python2.7 contrib/macdeploy/macdeployqtplus Icebergcoin-Qt.app -add-qt-tr $T -dmg -fancy contrib/macdeploy/fancy.plist
+  python2.7 contrib/macdeploy/macdeployqtplus Coffeecoin-Qt.app -add-qt-tr $T -dmg -fancy contrib/macdeploy/fancy.plist
 
  Build output expected:
-  Icebergcoin-Qt.dmg
+  Coffeecoin-Qt.dmg
 
 * upload builds to SourceForge
 
@@ -98,7 +98,7 @@
 
 * update wiki download links
 
-* update wiki changelog: https://en.icebergcoin.it/wiki/Changelog
+* update wiki changelog: https://en.coffeecoin.it/wiki/Changelog
 
 * Commit your signature to gitian.sigs:
   pushd gitian.sigs
@@ -112,31 +112,31 @@
 
 * After 3 or more people have gitian-built, repackage gitian-signed zips:
 
-  * From a directory containing icebergcoin source, gitian.sigs and gitian zips
+  * From a directory containing coffeecoin source, gitian.sigs and gitian zips
    export VERSION=0.5.1
-   mkdir icebergcoin-${VERSION}-linux-gitian
-   pushd icebergcoin-${VERSION}-linux-gitian
-   unzip ../icebergcoin-${VERSION}-linux-gitian.zip
+   mkdir coffeecoin-${VERSION}-linux-gitian
+   pushd coffeecoin-${VERSION}-linux-gitian
+   unzip ../coffeecoin-${VERSION}-linux-gitian.zip
    mkdir gitian
-   cp ../icebergcoin/contrib/gitian-downloader/*.pgp ./gitian/
+   cp ../coffeecoin/contrib/gitian-downloader/*.pgp ./gitian/
    for signer in $(ls ../gitian.sigs/${VERSION}/); do
-     cp ../gitian.sigs/${VERSION}/${signer}/icebergcoin-build.assert ./gitian/${signer}-build.assert
-     cp ../gitian.sigs/${VERSION}/${signer}/icebergcoin-build.assert.sig ./gitian/${signer}-build.assert.sig
+     cp ../gitian.sigs/${VERSION}/${signer}/coffeecoin-build.assert ./gitian/${signer}-build.assert
+     cp ../gitian.sigs/${VERSION}/${signer}/coffeecoin-build.assert.sig ./gitian/${signer}-build.assert.sig
    done
-   zip -r icebergcoin-${VERSION}-linux-gitian.zip *
-   cp icebergcoin-${VERSION}-linux-gitian.zip ../
+   zip -r coffeecoin-${VERSION}-linux-gitian.zip *
+   cp coffeecoin-${VERSION}-linux-gitian.zip ../
    popd
-   mkdir icebergcoin-${VERSION}-win32-gitian
-   pushd icebergcoin-${VERSION}-win32-gitian
-   unzip ../icebergcoin-${VERSION}-win32-gitian.zip
+   mkdir coffeecoin-${VERSION}-win32-gitian
+   pushd coffeecoin-${VERSION}-win32-gitian
+   unzip ../coffeecoin-${VERSION}-win32-gitian.zip
    mkdir gitian
-   cp ../icebergcoin/contrib/gitian-downloader/*.pgp ./gitian/
+   cp ../coffeecoin/contrib/gitian-downloader/*.pgp ./gitian/
    for signer in $(ls ../gitian.sigs/${VERSION}-win32/); do
-     cp ../gitian.sigs/${VERSION}-win32/${signer}/icebergcoin-build.assert ./gitian/${signer}-build.assert
-     cp ../gitian.sigs/${VERSION}-win32/${signer}/icebergcoin-build.assert.sig ./gitian/${signer}-build.assert.sig
+     cp ../gitian.sigs/${VERSION}-win32/${signer}/coffeecoin-build.assert ./gitian/${signer}-build.assert
+     cp ../gitian.sigs/${VERSION}-win32/${signer}/coffeecoin-build.assert.sig ./gitian/${signer}-build.assert.sig
    done
-   zip -r icebergcoin-${VERSION}-win32-gitian.zip *
-   cp icebergcoin-${VERSION}-win32-gitian.zip ../
+   zip -r coffeecoin-${VERSION}-win32-gitian.zip *
+   cp coffeecoin-${VERSION}-win32-gitian.zip ../
    popd
 
   * Upload gitian zips to SourceForge

@@ -50,7 +50,7 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="IcebergcoinAmountField" name="payAmount"/>
+    <widget class="CoffeecoinAmountField" name="payAmount"/>
    </item>
    <item row="4" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -90,7 +90,7 @@
      <item>
       <widget class="QValidatedLineEdit" name="payTo">
        <property name="toolTip">
-        <string>The address to send the payment to  (e.g. IcebergcoinfwYhBmGXcFP2Po1NpRUEiK8km2)</string>
+        <string>The address to send the payment to  (e.g. iUuWwFn7HKcHeARezeBp5fx8Yer18hyNEN)</string>
        </property>
        <property name="maxLength">
         <number>34</number>
@@ -106,7 +106,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../icebergcoin.qrc">
+        <iconset resource="../coffeecoin.qrc">
          <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
        </property>
        <property name="shortcut">
@@ -123,7 +123,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../icebergcoin.qrc">
+        <iconset resource="../coffeecoin.qrc">
          <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
        </property>
        <property name="shortcut">
@@ -140,7 +140,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../icebergcoin.qrc">
+        <iconset resource="../coffeecoin.qrc">
          <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
        </property>
       </widget>
@@ -151,9 +151,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>IcebergcoinAmountField</class>
+   <class>CoffeecoinAmountField</class>
    <extends>QSpinBox</extends>
-   <header>icebergcoinamountfield.h</header>
+   <header>coffeecoinamountfield.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -163,7 +163,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icebergcoin.qrc"/>
+  <include location="../coffeecoin.qrc"/>
  </resources>
  <connections/>
 </ui>

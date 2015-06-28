@@ -5,7 +5,7 @@
 #include "walletmodel.h"
 #include "addresstablemodel.h"
 #include "transactiontablemodel.h"
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 #include "csvmodelwriter.h"
 #include "transactiondescdialog.h"
 #include "editaddressdialog.h"
@@ -182,8 +182,12 @@ void TransactionView::setModel(WalletModel *model)
                 TransactionTableModel::Date, 120);
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Type, 120);
+#if QT_VERSION < 0x050000
         transactionView->horizontalHeader()->setResizeMode(
                 TransactionTableModel::ToAddress, QHeaderView::Stretch);
+#else
+        transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
+#endif
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Amount, 100);
     }
@@ -257,7 +261,7 @@ void TransactionView::changedAmount(const QString &amount)
     if(!transactionProxyModel)
         return;
     qint64 amount_parsed = 0;
-    if(IcebergcoinUnits::parse(model->getOptionsModel()->getDisplayUnit(), amount, &amount_parsed))
+    if(CoffeecoinUnits::parse(model->getOptionsModel()->getDisplayUnit(), amount, &amount_parsed))
     {
         transactionProxyModel->setMinAmount(amount_parsed);
     }

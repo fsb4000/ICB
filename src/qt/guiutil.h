@@ -15,7 +15,7 @@ class QAbstractItemView;
 QT_END_NAMESPACE
 class SendCoinsRecipient;
 
-/** Utility functions used by the Icebergcoin Qt UI.
+/** Utility functions used by the Coffeecoin Qt UI.
  */
 namespace GUIUtil
 {
@@ -23,17 +23,17 @@ namespace GUIUtil
     QString dateTimeStr(const QDateTime &datetime);
     QString dateTimeStr(qint64 nTime);
 
-    // Render Icebergcoin addresses in monospace font
-    QFont icebergcoinAddressFont();
+    // Render Coffeecoin addresses in monospace font
+    QFont coffeecoinAddressFont();
 
     // Set up widgets for address and amounts
     void setupAddressWidget(QLineEdit *widget, QWidget *parent);
     void setupAmountWidget(QLineEdit *widget, QWidget *parent);
 
-    // Parse "Icebergcoin:" URI into recipient object, return true on successful parsing
-    // See Icebergcoin URI definition discussion here: https://bitcointalk.org/index.php?topic=33490.0
-    bool parseIcebergcoinURI(const QUrl &uri, SendCoinsRecipient *out);
-    bool parseIcebergcoinURI(QString uri, SendCoinsRecipient *out);
+    // Parse "Coffeecoin:" URI into recipient object, return true on successful parsing
+    // See Coffeecoin URI definition discussion here: https://bitcointalk.org/index.php?topic=33490.0
+    bool parseCoffeecoinURI(const QUrl &uri, SendCoinsRecipient *out);
+    bool parseCoffeecoinURI(QString uri, SendCoinsRecipient *out);
 
     // HTML escaping for rich text controls
     QString HtmlEscape(const QString& str, bool fMultiLine=false);
@@ -95,7 +95,7 @@ namespace GUIUtil
     bool GetStartOnSystemStartup();
     bool SetStartOnSystemStartup(bool fAutoStart);
 
-    /** Help message for Icebergcoin-Qt, shown with --help. */
+    /** Help message for Coffeecoin-Qt, shown with --help. */
     class HelpMessageBox : public QMessageBox
     {
         Q_OBJECT

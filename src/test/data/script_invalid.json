@@ -227,7 +227,7 @@
 ["1", "GREATERTHAN"],
 ["1", "LESSTHANOREQUAL"],
 ["1", "GREATERTHANOREQUAL"],
-["1", "ICB"],
+["1", "CFC"],
 ["1", "MAX"],
 ["1 1", "WITHIN"],
 

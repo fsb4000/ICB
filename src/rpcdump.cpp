@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "init.h" // for pwalletMain
-#include "icebergcoinrpc.h"
+#include "coffeecoinrpc.h"
 #include "ui_interface.h"
 #include "base58.h"
 
@@ -109,14 +109,14 @@ Value importprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "importprivkey <Icebergcoinprivkey> [label]\n"
+            "importprivkey <Coffeecoinprivkey> [label]\n"
             "Adds a private key (as returned by dumpprivkey) to your wallet.");
 
     string strSecret = params[0].get_str();
     string strLabel = "";
     if (params.size() > 1)
         strLabel = params[1].get_str();
-    CIcebergcoinSecret vchSecret;
+    CCoffeecoinSecret vchSecret;
     bool fGood = vchSecret.SetString(strSecret);
 
     if (!fGood) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key");
@@ -172,7 +172,7 @@ Value importwallet(const Array& params, bool fHelp)
         boost::split(vstr, line, boost::is_any_of(" "));
         if (vstr.size() < 2)
             continue;
-        CIcebergcoinSecret vchSecret;
+        CCoffeecoinSecret vchSecret;
         if (!vchSecret.SetString(vstr[0]))
             continue;
 
@@ -183,7 +183,7 @@ Value importwallet(const Array& params, bool fHelp)
         CKeyID keyid = key.GetPubKey().GetID();
 
         if (pwalletMain->HaveKey(keyid)) {
-            printf("Skipping import of %s (key already present)\n", CIcebergcoinAddress(keyid).ToString().c_str());
+            printf("Skipping import of %s (key already present)\n", CCoffeecoinAddress(keyid).ToString().c_str());
             continue;
         }
         int64_t nTime = DecodeDumpTime(vstr[1]);
@@ -201,7 +201,7 @@ Value importwallet(const Array& params, bool fHelp)
                 fLabel = true;
             }
         }
-        printf("Importing %s...\n", CIcebergcoinAddress(keyid).ToString().c_str());
+        printf("Importing %s...\n", CCoffeecoinAddress(keyid).ToString().c_str());
         if (!pwalletMain->AddKey(key)) {
             fGood = false;
             continue;
@@ -236,15 +236,15 @@ Value dumpprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey <Icebergcoinaddress>\n"
-            "Reveals the private key corresponding to <Icebergcoinaddress>.");
+            "dumpprivkey <Coffeecoinaddress>\n"
+            "Reveals the private key corresponding to <Coffeecoinaddress>.");
 
     EnsureWalletIsUnlocked();
 
     string strAddress = params[0].get_str();
-    CIcebergcoinAddress address;
+    CCoffeecoinAddress address;
     if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Icebergcoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Coffeecoin address");
     if (fWalletUnlockStakingOnly)
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Wallet is unlocked for staking only.");
     CKeyID keyID;
@@ -254,7 +254,7 @@ Value dumpprivkey(const Array& params, bool fHelp)
     bool fCompressed;
     if (!pwalletMain->GetSecret(keyID, vchSecret, fCompressed))
         throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + strAddress + " is not known");
-    return CIcebergcoinSecret(vchSecret, fCompressed).ToString();
+    return CCoffeecoinSecret(vchSecret, fCompressed).ToString();
 }
 
 Value dumpwallet(const Array& params, bool fHelp)
@@ -288,7 +288,7 @@ Value dumpwallet(const Array& params, bool fHelp)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by Icebergcoin %s (%s)\n", CLIENT_BUILD.c_str(), CLIENT_DATE.c_str());
+    file << strprintf("# Wallet dump created by Coffeecoin %s (%s)\n", CLIENT_BUILD.c_str(), CLIENT_DATE.c_str());
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()).c_str());
     file << strprintf("# * Best block at time of backup was %i (%s),\n", nBestHeight, hashBestChain.ToString().c_str());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(pindexBest->nTime).c_str());
@@ -296,20 +296,20 @@ Value dumpwallet(const Array& params, bool fHelp)
     for (std::vector<std::pair<int64_t, CKeyID> >::const_iterator it = vKeyBirth.begin(); it != vKeyBirth.end(); it++) {
         const CKeyID &keyid = it->second;
         std::string strTime = EncodeDumpTime(it->first);
-        std::string strAddr = CIcebergcoinAddress(keyid).ToString();
+        std::string strAddr = CCoffeecoinAddress(keyid).ToString();
         bool IsCompressed;
 
         CKey key;
         if (pwalletMain->GetKey(keyid, key)) {
             if (pwalletMain->mapAddressBook.count(keyid)) {
                 CSecret secret = key.GetSecret(IsCompressed);
-                file << strprintf("%s %s label=%s # addr=%s\n", CIcebergcoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), EncodeDumpString(pwalletMain->mapAddressBook[keyid]).c_str(), strAddr.c_str());
+                file << strprintf("%s %s label=%s # addr=%s\n", CCoffeecoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), EncodeDumpString(pwalletMain->mapAddressBook[keyid]).c_str(), strAddr.c_str());
             } else if (setKeyPool.count(keyid)) {
                 CSecret secret = key.GetSecret(IsCompressed);
-                file << strprintf("%s %s reserve=1 # addr=%s\n", CIcebergcoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), strAddr.c_str());
+                file << strprintf("%s %s reserve=1 # addr=%s\n", CCoffeecoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), strAddr.c_str());
             } else {
                 CSecret secret = key.GetSecret(IsCompressed);
-                file << strprintf("%s %s change=1 # addr=%s\n", CIcebergcoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), strAddr.c_str());
+                file << strprintf("%s %s change=1 # addr=%s\n", CCoffeecoinSecret(secret, IsCompressed).ToString().c_str(), strTime.c_str(), strAddr.c_str());
             }
         }
     }

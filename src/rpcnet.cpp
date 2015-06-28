@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "net.h"
-#include "icebergcoinrpc.h"
+#include "coffeecoinrpc.h"
 #include "alert.h"
 #include "wallet.h"
 #include "db.h"
@@ -68,7 +68,7 @@ Value getpeerinfo(const Array& params, bool fHelp)
     return ret;
 }
  
-// icebergcoin: send alert.  
+// coffeecoin: send alert.  
 // There is a known deadlock situation with ThreadMessageHandler
 // ThreadMessageHandler: holds cs_vSend and acquiring cs_main in SendMessages()
 // ThreadRPCServer: holds cs_main and acquiring cs_vSend in alert.RelayTo()/PushMessage()/BeginMessage()

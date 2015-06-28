@@ -19,7 +19,7 @@
 using namespace std;
 namespace libzerocoin {
 
-/** Any meta data needed for actual icebergcoin integration.
+/** Any meta data needed for actual coffeecoin integration.
  * Can extended provided the getHash() function is updated
  */
 class SpendMetaData {

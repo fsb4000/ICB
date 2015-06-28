@@ -1164,7 +1164,7 @@ static void ApproximateBestSubset(vector<pair<int64_t, pair<const CWalletTx*,uns
     }
 }
 
-// icebergcoin: total coins staked (non-spendable until maturity)
+// coffeecoin: total coins staked (non-spendable until maturity)
 int64_t CWallet::GetStake() const
 {
     int64_t nTotal = 0;
@@ -1420,7 +1420,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
                 {
                     // Fill a vout to ourself
                     // TODO: pass in scriptChange instead of reservekey so
-                    // change transaction isn't always pay-to-icebergcoin-address
+                    // change transaction isn't always pay-to-coffeecoin-address
                     CScript scriptChange;
 
                     // coin control: send change to custom address
@@ -1494,7 +1494,7 @@ bool CWallet::CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx&
     return CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, coinControl);
 }
 
-// IcebergCoin: get current stake weight
+// CoffeeCoin: get current stake weight
 bool CWallet::GetStakeWeight(const CKeyStore& keystore, uint64_t& nMinWeight, uint64_t& nMaxWeight, uint64_t& nWeight)
 {
     // Choose coins to use
@@ -1859,7 +1859,7 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, int64_t nV
     if (nValue + nTransactionFee > GetBalance())
         return _("Insufficient funds");
 
-    // Parse Icebergcoin address
+    // Parse Coffeecoin address
     CScript scriptPubKey;
     scriptPubKey.SetDestination(address);
 
@@ -1902,7 +1902,7 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     if (!fFileBacked)
         return false;
-    return CWalletDB(strWalletFile).WriteName(CIcebergcoinAddress(address).ToString(), strName);
+    return CWalletDB(strWalletFile).WriteName(CCoffeecoinAddress(address).ToString(), strName);
 }
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)
@@ -1911,7 +1911,7 @@ bool CWallet::DelAddressBookName(const CTxDestination& address)
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address), CT_DELETED);
     if (!fFileBacked)
         return false;
-    return CWalletDB(strWalletFile).EraseName(CIcebergcoinAddress(address).ToString());
+    return CWalletDB(strWalletFile).EraseName(CCoffeecoinAddress(address).ToString());
 }
 
 
@@ -2250,8 +2250,8 @@ set< set<CTxDestination> > CWallet::GetAddressGroupings()
     return ret;
 }
 
-// icebergcoin: check 'spent' consistency between wallet and txindex
-// icebergcoin: fix wallet spent state according to txindex
+// coffeecoin: check 'spent' consistency between wallet and txindex
+// coffeecoin: fix wallet spent state according to txindex
 void CWallet::FixSpentCoins(int& nMismatchFound, int64_t& nBalanceInQuestion, bool fCheckOnly)
 {
     nMismatchFound = 0;
@@ -2300,7 +2300,7 @@ void CWallet::FixSpentCoins(int& nMismatchFound, int64_t& nBalanceInQuestion, bo
     }
 }
 
-// icebergcoin: disable transaction (only for coinstake)
+// coffeecoin: disable transaction (only for coinstake)
 void CWallet::DisableTransaction(const CTransaction &tx)
 {
     if (!tx.IsCoinStake() || !IsFromMe(tx))

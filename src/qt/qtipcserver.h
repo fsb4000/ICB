@@ -1,8 +1,8 @@
 #ifndef QTIPCSERVER_H
 #define QTIPCSERVER_H
 
-// Define Icebergcoin-Qt message queue name
-#define ICEBERGCOINURI_QUEUE_NAME "IcebergcoinURI"
+// Define Coffeecoin-Qt message queue name
+#define COFFEECOINURI_QUEUE_NAME "CoffeecoinURI"
 
 void ipcScanRelay(int argc, char *argv[]);
 void ipcInit(int argc, char *argv[]);

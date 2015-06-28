@@ -1,9 +1,9 @@
-Building icebergcoin
+Building coffeecoin
 
-See doc/readme-qt.rst for instructions on building icebergcoin QT,
+See doc/readme-qt.rst for instructions on building coffeecoin QT,
 the intended-for-end-users, nice-graphical-interface, reference
-implementation of icebergcoin.
+implementation of coffeecoin.
 
-See doc/build-*.txt for instructions on building icebergcoind,
+See doc/build-*.txt for instructions on building coffeecoind,
 the intended-for-services, no-graphical-interface, reference
-implementation of icebergcoin.
+implementation of coffeecoin.

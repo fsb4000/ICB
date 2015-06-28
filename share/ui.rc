@@ -1,4 +1,4 @@
-icebergcoin               ICON    "pixmaps/icebergcoin.ico"
+coffeecoin               ICON    "pixmaps/coffeecoin.ico"
 
 #include "wx/msw/wx.rc"
 

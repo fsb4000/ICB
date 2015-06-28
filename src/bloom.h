@@ -1,8 +1,8 @@
 // Copyright (c) 2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef ICEBERGCOIN_BLOOM_H
-#define ICEBERGCOIN_BLOOM_H
+#ifndef COFFEECOIN_BLOOM_H
+#define COFFEECOIN_BLOOM_H
 
 #include <vector>
 
@@ -88,4 +88,4 @@ public:
     void UpdateEmptyFull();
 };
 
-#endif /* ICEBERGCOIN_BLOOM_H */
+#endif /* COFFEECOIN_BLOOM_H */

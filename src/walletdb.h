@@ -2,8 +2,8 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef ICEBERGCOIN_WALLETDB_H
-#define ICEBERGCOIN_WALLETDB_H
+#ifndef COFFEECOIN_WALLETDB_H
+#define COFFEECOIN_WALLETDB_H
 
 #include "db.h"
 #include "base58.h"
@@ -201,4 +201,4 @@ public:
     static bool Recover(CDBEnv& dbenv, std::string filename);
 };
 
-#endif // ICEBERGCOIN_WALLETDB_H
+#endif // COFFEECOIN_WALLETDB_H

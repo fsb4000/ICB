@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ICEBERGCOIN_LEVELDB_H
-#define ICEBERGCOIN_LEVELDB_H
+#ifndef COFFEECOIN_LEVELDB_H
+#define COFFEECOIN_LEVELDB_H
 
 #include "main.h"
 
@@ -207,4 +207,4 @@ private:
 };
 
 
-#endif // ICEBERGCOIN_DB_H
+#endif // COFFEECOIN_DB_H

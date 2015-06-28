@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "main.h"
-#include "icebergcoinrpc.h"
+#include "coffeecoinrpc.h"
 
 using namespace json_spirit;
 using namespace std;
@@ -274,7 +274,7 @@ Value getblockbynumber(const Array& params, bool fHelp)
     return blockToJSON(block, pblockindex, params.size() > 1 ? params[1].get_bool() : false);
 }
 
-// icebergcoin: get information of sync-checkpoint
+// coffeecoin: get information of sync-checkpoint
 Value getcheckpoint(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)

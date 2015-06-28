@@ -2,8 +2,8 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef ICEBERGCOIN_MAIN_H
-#define ICEBERGCOIN_MAIN_H
+#ifndef COFFEECOIN_MAIN_H
+#define COFFEECOIN_MAIN_H
 
 #include "bignum.h"
 #include "sync.h"
@@ -27,7 +27,7 @@ class CInv;
 class CRequestTracker;
 class CNode;
 
-static const int LAST_POW_BLOCK = 17302;
+static const int LAST_POW_BLOCK = 1470;
 
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
@@ -51,7 +51,7 @@ static const int fHaveUPnP = true;
 static const int fHaveUPnP = false;
 #endif
 
-static const uint256 hashGenesisBlock("0x000003e33e2e1a228be26d37598476b5db7edffb5778796a410930e9d004a764");
+static const uint256 hashGenesisBlock("0x00000b0056110376dc8095cabe3cee2870739c14e487447c4daf18c4b39ef5cb");
 static const uint256 hashGenesisBlockTestNet("0x00000c85d8e6a5fa33f8b093ccee3d37c56128f438e2d5eb1e2723ef6ea590a0");
 inline int64_t PastDrift(int64_t nTime)   { return nTime - 10 * 60; } // up to 10 minutes from the past
 inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; } // up to 10 minutes from the future
@@ -531,7 +531,7 @@ public:
 
     bool IsCoinStake() const
     {
-        // icebergcoin: the coin stake transaction is marked with the first output empty
+        // coffeecoin: the coin stake transaction is marked with the first output empty
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
 
@@ -561,7 +561,7 @@ public:
      */
     unsigned int GetP2SHSigOpCount(const MapPrevTx& mapInputs) const;
 
-    /** Amount of icebergcoins spent by this transaction.
+    /** Amount of coffeecoins spent by this transaction.
         @return sum of all outputs (note: does not include fees)
      */
     int64_t GetValueOut() const
@@ -576,7 +576,7 @@ public:
         return nValueOut;
     }
 
-    /** Amount of icebergcoins coming in to this transaction
+    /** Amount of coffeecoins coming in to this transaction
         Note that lightweight clients may not know anything besides the hash of previous transactions,
         so may not be able to calculate this.
 
@@ -695,7 +695,7 @@ public:
     bool ClientConnectInputs();
     bool CheckTransaction() const;
     bool AcceptToMemoryPool(CTxDB& txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
-    bool GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const;  // icebergcoin: get transaction coin age
+    bool GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const;  // coffeecoin: get transaction coin age
 
 protected:
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
@@ -847,7 +847,7 @@ public:
     // network and disk
     std::vector<CTransaction> vtx;
 
-    // icebergcoin: block signature - signed by one of the coin base txout[N]'s owner
+    // coffeecoin: block signature - signed by one of the coin base txout[N]'s owner
     std::vector<unsigned char> vchBlockSig;
 
     // memory only
@@ -926,7 +926,7 @@ public:
         return nEntropyBit;
     }
 
-    // icebergcoin: two types of block: proof-of-work or proof-of-stake
+    // coffeecoin: two types of block: proof-of-work or proof-of-stake
     bool IsProofOfStake() const
     {
         return (vtx.size() > 1 && vtx[1].IsCoinStake());
@@ -942,7 +942,7 @@ public:
         return IsProofOfStake()? std::make_pair(vtx[1].vin[0].prevout, vtx[1].nTime) : std::make_pair(COutPoint(), (unsigned int)0);
     }
 
-    // icebergcoin: get max transaction timestamp
+    // coffeecoin: get max transaction timestamp
     int64_t GetMaxTransactionTime() const
     {
         int64_t maxTransactionTime = 0;
@@ -1085,7 +1085,7 @@ public:
     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const uint256& hashProofOfStake);
     bool CheckBlock(bool fCheckPOW=true, bool fCheckMerkleRoot=true, bool fCheckSig=true) const;
     bool AcceptBlock();
-    bool GetCoinAge(uint64_t& nCoinAge) const; // icebergcoin: calculate total coin age spent in block
+    bool GetCoinAge(uint64_t& nCoinAge) const; // coffeecoin: calculate total coin age spent in block
     bool SignBlock(CWallet& keystore, int64_t nFees);
     bool CheckBlockSignature() const;
 
@@ -1113,13 +1113,13 @@ public:
     CBlockIndex* pnext;
     unsigned int nFile;
     unsigned int nBlockPos;
-    uint256 nChainTrust; // icebergcoin: trust score of block chain
+    uint256 nChainTrust; // coffeecoin: trust score of block chain
     int nHeight;
 
     int64_t nMint;
     int64_t nMoneySupply;
 
-    unsigned int nFlags;  // icebergcoin: block index flags
+    unsigned int nFlags;  // coffeecoin: block index flags
     enum  
     {
         BLOCK_PROOF_OF_STAKE = (1 << 0), // is proof-of-stake block

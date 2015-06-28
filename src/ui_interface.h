@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ICEBERGCOIN_UI_INTERFACE_H
-#define ICEBERGCOIN_UI_INTERFACE_H
+#ifndef COFFEECOIN_UI_INTERFACE_H
+#define COFFEECOIN_UI_INTERFACE_H
 
 #include <boost/signals2/last_value.hpp>
 #include <boost/signals2/signal.hpp>

@@ -1,7 +1,7 @@
 #include "transactiondesc.h"
 
 #include "guiutil.h"
-#include "icebergcoinunits.h"
+#include "coffeecoinunits.h"
 
 #include "main.h"
 #include "wallet.h"
@@ -25,7 +25,7 @@ QString TransactionDesc::FormatTxStatus(const CWalletTx& wtx)
             return tr("conflicted");
         else if (GetAdjustedTime() - wtx.nTimeReceived > 2 * 60 && wtx.GetRequestCount() == 0)
             return tr("%1/offline").arg(nDepth);
-        else if (nDepth < 10)
+        else if (nDepth < 4)
             return tr("%1/unconfirmed").arg(nDepth);
         else
             return tr("%1 confirmations").arg(nDepth);
@@ -88,7 +88,7 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                             {
                                 strHTML += "<b>" + tr("From") + ":</b> " + tr("unknown") + "<br>";
                                 strHTML += "<b>" + tr("To") + ":</b> ";
-                                strHTML += GUIUtil::HtmlEscape(CIcebergcoinAddress(address).ToString());
+                                strHTML += GUIUtil::HtmlEscape(CCoffeecoinAddress(address).ToString());
                                 if (!wallet->mapAddressBook[address].empty())
                                     strHTML += " (" + tr("own address") + ", " + tr("label") + ": " + GUIUtil::HtmlEscape(wallet->mapAddressBook[address]) + ")";
                                 else
@@ -110,7 +110,7 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
             // Online transaction
             std::string strAddress = wtx.mapValue["to"];
             strHTML += "<b>" + tr("To") + ":</b> ";
-            CTxDestination dest = CIcebergcoinAddress(strAddress).Get();
+            CTxDestination dest = CCoffeecoinAddress(strAddress).Get();
             if (wallet->mapAddressBook.count(dest) && !wallet->mapAddressBook[dest].empty())
                 strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[dest]) + " ";
             strHTML += GUIUtil::HtmlEscape(strAddress) + "<br>";
@@ -129,7 +129,7 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                 nUnmatured += wallet->GetCredit(txout);
             strHTML += "<b>" + tr("Credit") + ":</b> ";
             if (wtx.IsInMainChain())
-                strHTML += IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, nUnmatured)+ " (" + tr("matures in %n more block(s)", "", wtx.GetBlocksToMaturity()) + ")";
+                strHTML += CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, nUnmatured)+ " (" + tr("matures in %n more block(s)", "", wtx.GetBlocksToMaturity()) + ")";
             else
                 strHTML += "(" + tr("not accepted") + ")";
             strHTML += "<br>";
@@ -139,7 +139,7 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
             //
             // Credit
             //
-            strHTML += "<b>" + tr("Credit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, nNet) + "<br>";
+            strHTML += "<b>" + tr("Credit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, nNet) + "<br>";
         }
         else
         {
@@ -170,12 +170,12 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                             strHTML += "<b>" + tr("To") + ":</b> ";
                             if (wallet->mapAddressBook.count(address) && !wallet->mapAddressBook[address].empty())
                                 strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[address]) + " ";
-                            strHTML += GUIUtil::HtmlEscape(CIcebergcoinAddress(address).ToString());
+                            strHTML += GUIUtil::HtmlEscape(CCoffeecoinAddress(address).ToString());
                             strHTML += "<br>";
                         }
                     }
 
-                    strHTML += "<b>" + tr("Debit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, -txout.nValue) + "<br>";
+                    strHTML += "<b>" + tr("Debit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, -txout.nValue) + "<br>";
                 }
 
                 if (fAllToMe)
@@ -183,13 +183,13 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                     // Payment to self
                     int64_t nChange = wtx.GetChange();
                     int64_t nValue = nCredit - nChange;
-                    strHTML += "<b>" + tr("Debit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, -nValue) + "<br>";
-                    strHTML += "<b>" + tr("Credit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, nValue) + "<br>";
+                    strHTML += "<b>" + tr("Debit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, -nValue) + "<br>";
+                    strHTML += "<b>" + tr("Credit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, nValue) + "<br>";
                 }
 
                 int64_t nTxFee = nDebit - wtx.GetValueOut();
                 if (nTxFee > 0)
-                    strHTML += "<b>" + tr("Transaction fee") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, -nTxFee) + "<br>";
+                    strHTML += "<b>" + tr("Transaction fee") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, -nTxFee) + "<br>";
             }
             else
             {
@@ -198,14 +198,14 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                 //
                 BOOST_FOREACH(const CTxIn& txin, wtx.vin)
                     if (wallet->IsMine(txin))
-                        strHTML += "<b>" + tr("Debit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, -wallet->GetDebit(txin)) + "<br>";
+                        strHTML += "<b>" + tr("Debit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, -wallet->GetDebit(txin)) + "<br>";
                 BOOST_FOREACH(const CTxOut& txout, wtx.vout)
                     if (wallet->IsMine(txout))
-                        strHTML += "<b>" + tr("Credit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, wallet->GetCredit(txout)) + "<br>";
+                        strHTML += "<b>" + tr("Credit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, wallet->GetCredit(txout)) + "<br>";
             }
         }
 
-        strHTML += "<b>" + tr("Net amount") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, nNet, true) + "<br>";
+        strHTML += "<b>" + tr("Net amount") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, nNet, true) + "<br>";
 
         //
         // Message
@@ -228,10 +228,10 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
             strHTML += "<hr><br>" + tr("Debug information") + "<br><br>";
             BOOST_FOREACH(const CTxIn& txin, wtx.vin)
                 if(wallet->IsMine(txin))
-                    strHTML += "<b>" + tr("Debit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, -wallet->GetDebit(txin)) + "<br>";
+                    strHTML += "<b>" + tr("Debit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, -wallet->GetDebit(txin)) + "<br>";
             BOOST_FOREACH(const CTxOut& txout, wtx.vout)
                 if(wallet->IsMine(txout))
-                    strHTML += "<b>" + tr("Credit") + ":</b> " + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, wallet->GetCredit(txout)) + "<br>";
+                    strHTML += "<b>" + tr("Credit") + ":</b> " + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, wallet->GetCredit(txout)) + "<br>";
 
             strHTML += "<br><b>" + tr("Transaction") + ":</b><br>";
             strHTML += GUIUtil::HtmlEscape(wtx.ToString(), true);
@@ -259,9 +259,9 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
                             {
                                 if (wallet->mapAddressBook.count(address) && !wallet->mapAddressBook[address].empty())
                                     strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[address]) + " ";
-                                strHTML += QString::fromStdString(CIcebergcoinAddress(address).ToString());
+                                strHTML += QString::fromStdString(CCoffeecoinAddress(address).ToString());
                             }
-                            strHTML = strHTML + " " + tr("Amount") + "=" + IcebergcoinUnits::formatWithUnit(IcebergcoinUnits::ICB, vout.nValue);
+                            strHTML = strHTML + " " + tr("Amount") + "=" + CoffeecoinUnits::formatWithUnit(CoffeecoinUnits::CFC, vout.nValue);
                             strHTML = strHTML + " IsMine=" + (wallet->IsMine(vout) ? tr("true") : tr("false")) + "</li>";
                         }
                     }
